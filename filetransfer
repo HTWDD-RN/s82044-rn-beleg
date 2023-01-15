@@ -1,0 +1,7 @@
+#!/bin/sh
+
+temp=$(dirname "$(realpath $0)")
+
+echo realpath "$0"
+
+java -jar "$temp"/bin/libs/beleg_dateitransfer-1.0-SNAPSHOT-all.jar "$@"

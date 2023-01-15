@@ -1,0 +1,17 @@
+@startuml
+top to bottom direction
+state crccheck <<choice>>
+[*] --> waitingforpaket : Server wird initialisiert
+waitingforpaket : Warten auf eingehende Datenpackete
+waitingforpaket --> getpaketdata : Packet empfangen
+getpaketdata --> sendack
+getpaketdata : Verarbeiten der Daten des Packets
+sendack --> waitingforpaket
+sendack : letztes korrekt eingegangene Packet wird mit Acknowledge-Paket beantwortet
+sendack --> crccheck : Paket hat Datei-CRC
+crccheck --> waitingforpaket : CRC-Check falsch
+crccheck --> writeFile : CRC-Check der gesamten Datei richtig
+writeFile : Schreiben der empfangenen Daten in Datei
+writeFile : ggf. Anpassung Dateiname
+writeFile --> sendack : Bestätigung
+@enduml

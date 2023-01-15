@@ -1,0 +1,14 @@
+@startuml
+top to bottom direction
+[*] --> FileTransfer
+state choice <<choice>>
+state abbruch <<end>>
+FileTransfer--> SendingPacket
+FileTransfer : Filetransfer wird initialisiert
+SendingPacket --> SendingPacket : ACK für Packet erhalten
+SendingPacket --> choice : Timeout
+choice --> SendingPacket : Anzahl Timouts <= max. Anzahl Retrys
+choice --> abbruch : Anzahl Timouts > max. Anzahl Retrys
+note left of abbruch: Abbruch\nnote
+SendingPacket --> [*]
+@enduml
