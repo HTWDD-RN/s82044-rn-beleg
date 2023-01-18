@@ -7,6 +7,8 @@ import java.util.zip.CRC32
 import kotlin.random.Random
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
+import java.net.URI
+import java.net.URLDecoder
 
 fun longToBytes(x: ULong): ByteArray {
     val buffer: ByteBuffer = ByteBuffer.allocate(java.lang.Long.BYTES)
@@ -71,11 +73,12 @@ class FileTransfer : FT {
         client.debug("connected to ${this.host}")
 
         val start = "Start"
+        val readFileName = URI(file.name).toASCIIString()
         val fileSize: ULong = File("./$fileName").length().toULong()
-        val filenameLength = fileName.length.toULong()
+        val filenameLength = readFileName.length.toULong()
 
         val packageInfo =
-            start.toByteArray() + longToBytes(fileSize) + shortToBytes(filenameLength.toShort()) + fileName.toByteArray()
+            start.toByteArray() + longToBytes(fileSize) + shortToBytes(filenameLength.toShort()) + readFileName.toByteArray()
 
         val crcChecksumCalc = CRC32()
         crcChecksumCalc.update(packageInfo)
@@ -167,12 +170,13 @@ class FileTransfer : FT {
         println("data size received: ${data.size}")
 
 
-        var file = Paths.get(server.fileName).toFile()
+        val fileName = URLDecoder.decode(server.fileName, Charset.forName("utf-8"))
+        var file = Paths.get(fileName).toFile()
 
         var i = 0
         while (file.exists()) {
             i += 1
-            file = Paths.get("${server.fileName}${i}").toFile()
+            file = Paths.get("${fileName}${i}").toFile()
         }
 
         if (!file.createNewFile()) {
@@ -188,5 +192,6 @@ class FileTransfer : FT {
 
         return true
     }
+
 
 }
