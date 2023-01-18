@@ -61,8 +61,8 @@ class FileTransfer : FT {
 
     override fun file_req(): Boolean {
         //val logger = Logger.getAnonymousLogger()
-
-        val fileContent = File(fileName).readBytes()
+        val file = File(fileName)
+        val fileContent = file.readBytes()
 
         // cast to short se we really have a short
         val sessionId = Random.nextBits(16).toShort()
